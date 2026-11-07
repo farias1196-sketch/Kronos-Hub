@@ -1,0 +1,57 @@
+name: Verificar distribuição local
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  verificar:
+    runs-on: windows-latest
+    timeout-minutes: 25
+    env:
+      PYTHONUTF8: "1"
+      PIP_DISABLE_PIP_VERSION_CHECK: "1"
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6
+        with:
+          python-version: "3.11"
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: "22"
+      - name: Conferir índice de publicação
+        run: python audit_index.py
+      - name: Instalar dependências do Hub
+        run: python -m pip install -r requirements.txt
+      - name: Testar autenticação, isolamento e persistência
+        run: python verify_preview.py
+      - name: Testar atualização da primeira revisão pública
+        run: python verificar_atualizacao.py
+      - name: Exportar piloto do Estoque
+        run: python Chronos_stock/exportar_piloto.py "$env:RUNNER_TEMP/piloto-estoque"
+      - name: Exportar piloto integrado
+        run: python Chronos_loja/exportar_piloto.py "$env:RUNNER_TEMP/piloto-loja"
+      - name: Testar Estoque exportado
+        run: python "$env:RUNNER_TEMP/piloto-estoque/Chronos_stock/verificar_piloto.py"
+      - name: Testar Loja exportada
+        run: python "$env:RUNNER_TEMP/piloto-loja/Chronos_loja/verificar_integracao.py"
+      - name: Construir wheels locais
+        run: python empacotar_pilotos.py "$env:RUNNER_TEMP/wheels"
+      - name: Criar ambiente exclusivo dos pilotos
+        run: python -m venv "$env:RUNNER_TEMP/venv-pilotos"
+      - name: Instalar wheels
+        run: |
+          $wheels = (Get-ChildItem "$env:RUNNER_TEMP/wheels/*.whl").FullName
+          & "$env:RUNNER_TEMP/venv-pilotos/Scripts/python.exe" -m pip install $wheels
+      - name: Verificar serviços instalados
+        run: '& "$env:RUNNER_TEMP/venv-pilotos/Scripts/python.exe" -I verificar_pacotes.py'
+      - name: Instalar interface
+        run: npm.cmd --prefix Chronos_UI ci --ignore-scripts --no-audit
+      - name: Compilar interface
+        run: npm.cmd --prefix Chronos_UI run build

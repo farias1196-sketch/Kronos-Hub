@@ -35,7 +35,7 @@ def main():
         rb"\b\d{3}\.\d{3}\.\d{3}-\d{2}\b|\b\d{2}\.\d{3}\.\d{3}/\d{4}-\d{2}\b",
     )
     allowed_types = {".md", ".py", ".sql"}
-    exceptions = licenses | {".env.example", ".gitignore", "requirements.txt", "Chronos_stock/requirements.txt", "Chronos_loja/requirements.txt"}
+    exceptions = licenses | {".env.example", ".gitignore", ".github/workflows/verificar.yml", "requirements.txt", "Chronos_stock/requirements.txt", "Chronos_loja/requirements.txt"}
     excluded = {".local", "data", "backups", "imports", "secrets", "sessions", "exports"}
     ui_files = {
         "Chronos_UI/index.html", "Chronos_UI/package.json", "Chronos_UI/package-lock.json",

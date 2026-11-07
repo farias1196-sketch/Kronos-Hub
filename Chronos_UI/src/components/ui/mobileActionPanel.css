@@ -1,0 +1,2 @@
+.mobile-action-panel { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-width: 0; min-height: 48px; padding: 12px 14px; border: 1px solid var(--chronos-border); border-radius: 12px; background: var(--chronos-panel); color: var(--chronos-text); font: inherit; text-align: left; }
+.mobile-action-panel svg { flex-shrink: 0; }

@@ -1,0 +1,6 @@
+.promotion-tools { display: grid; gap: 10px; min-width: 0; grid-column: 1 / -1; }
+.promotion-tools label { display: grid; gap: 6px; }
+.promotion-results { display: grid; gap: 6px; max-height: 240px; overflow: auto; }
+.promotion-results button { display: grid; text-align: left; white-space: normal; overflow-wrap: anywhere; gap: 4px; }
+.promotion-invalid, .promotion-invalid strong, .promotion-invalid span, .promotion-invalid p, .promotion-invalid button { color: #dc2626 !important; }
+.promotion-results .promotion-invalid { border: 1px solid #dc2626; background: #fef2f2; }

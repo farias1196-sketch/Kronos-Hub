@@ -1,0 +1,158 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("CHRONOS_PREVIEW_SCHEMA_URL")
+}
+
+enum TenantStatus {
+  ACTIVE
+  TRIAL
+  SUSPENDED
+  DISABLED
+}
+
+enum MessageDirection {
+  INBOUND
+  OUTBOUND
+}
+
+enum QueueStatus {
+  QUEUED
+  HELD
+  SCHEDULED
+  PROCESSING
+  DONE
+  FAILED
+  CANCELLED
+}
+
+model Tenant {
+  id          String       @id
+  slug        String       @unique
+  name        String
+  tradeName   String?      @map("trade_name")
+  status      TenantStatus @default(TRIAL)
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  memberships Membership[]
+  clients     Client[]
+  chats       Chat[]
+  messages    ChatMessage[]
+  revisions   DataRevision?
+
+  @@map("tenants")
+}
+
+model User {
+  id          String       @id
+  name        String
+  email       String       @unique
+  status      String       @default("ACTIVE")
+  createdAt   DateTime     @default(now()) @map("created_at")
+  updatedAt   DateTime     @updatedAt @map("updated_at")
+  memberships Membership[]
+
+  @@map("users")
+}
+
+model Membership {
+  id           String   @id
+  tenantId     String   @map("tenant_id")
+  userId       String   @map("user_id")
+  role         String
+  active       Boolean  @default(true)
+  passwordHash String?  @map("password_hash")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+  tenant       Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([tenantId, userId])
+  @@map("tenant_members")
+}
+
+model Client {
+  id          String   @id
+  tenantId    String   @map("tenant_id")
+  phone       String?
+  displayName String?  @map("display_name")
+  remoteJid   String?  @map("remote_jid")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+  tenant      Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@index([tenantId, phone])
+  @@map("clients")
+}
+
+model Chat {
+  id            String        @id
+  tenantId      String        @map("tenant_id")
+  contactId     String        @map("contact_id")
+  remoteJid     String?       @map("remote_jid")
+  phone         String
+  displayName   String?       @map("display_name")
+  lastMessage   String?       @map("last_message")
+  lastMessageAt DateTime?     @map("last_message_at")
+  unreadCount   Int           @default(0) @map("unread_count")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+  tenant        Tenant        @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  messages      ChatMessage[]
+  queueItems    MessageQueue[]
+
+  @@unique([tenantId, contactId])
+  @@index([tenantId, lastMessageAt])
+  @@map("chats")
+}
+
+model ChatMessage {
+  id                String           @id
+  chatId            String           @map("chat_id")
+  tenantId          String           @map("tenant_id")
+  contactId         String           @map("contact_id")
+  remoteJid         String?          @map("remote_jid")
+  direction         MessageDirection
+  text              String?
+  externalMessageId String?          @map("external_message_id")
+  mediaType         String?          @map("media_type")
+  mediaUrl          String?          @map("media_url")
+  createdAt         DateTime         @map("created_at")
+  chat              Chat             @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  tenant            Tenant           @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+  queueItems        MessageQueue[]
+
+  @@unique([tenantId, externalMessageId])
+  @@index([chatId, createdAt])
+  @@map("chat_messages")
+}
+
+model MessageQueue {
+  id          String      @id
+  tenantId    String      @map("tenant_id")
+  chatId      String      @map("chat_id")
+  messageId   String?     @map("message_id")
+  queueType   String      @map("queue_type")
+  status      QueueStatus
+  priority    Int
+  availableAt DateTime    @map("available_at")
+  createdAt   DateTime    @default(now()) @map("created_at")
+  updatedAt   DateTime    @updatedAt @map("updated_at")
+  chat        Chat        @relation(fields: [chatId], references: [id], onDelete: Cascade)
+  message     ChatMessage? @relation(fields: [messageId], references: [id], onDelete: SetNull)
+
+  @@index([tenantId, status, priority, availableAt])
+  @@map("message_queue")
+}
+
+model DataRevision {
+  tenantId  String   @id @map("tenant_id")
+  revision  BigInt   @default(0)
+  updatedAt DateTime @updatedAt @map("updated_at")
+  tenant    Tenant   @relation(fields: [tenantId], references: [id], onDelete: Cascade)
+
+  @@map("data_revisions")
+}

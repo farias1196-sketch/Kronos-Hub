@@ -1,0 +1,61 @@
+.mobile-native-body .stock-mobile { padding: 14px; gap: 14px; }
+.stock-mobile .stock-header { padding: 0; gap: 12px; }
+.stock-mobile .stock-header h1 { margin: 0; font-size: 22px; overflow-wrap: anywhere; }
+.stock-mobile .stock-header > div:first-child > :is(span,p) { display: none; }
+.stock-mobile .stock-header-actions { display: flex; flex-wrap: wrap; width: 100%; }
+.stock-mobile .stock-header-actions button { flex: 1; }
+.stock-mobile .stock-toolbar { padding: 0; display: grid; grid-template-columns: minmax(0,1fr); gap: 8px; }
+.stock-mobile .stock-toolbar label { min-width: 0; width: 100%; box-sizing: border-box; }
+.stock-mobile .stock-toolbar input { min-width: 0; width: 100%; }
+.stock-mobile-list { display: grid; gap: 14px; min-width: 0; }
+.stock-mobile-card { padding: 16px; border: 1px solid var(--chronos-border); border-radius: 16px; background: var(--chronos-panel); min-width: 0; overflow-wrap: anywhere; }
+.stock-mobile-card h2 { font-size: 17px; line-height: 1.5; margin: 0 0 8px; }
+.stock-mobile-card header small, .stock-mobile-card dt, .stock-mobile-note { color: var(--chronos-muted); font-size: 12px; }
+.stock-mobile-card header p { margin: 8px 0; font-size: 13px; line-height: 1.5; }
+.stock-mobile-balance { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; margin: 14px 0; }
+.stock-mobile-balance > div { padding: 10px; border-radius: 12px; background: var(--chronos-panel-2); min-width: 0; }
+.stock-mobile-balance dd { margin: 6px 0 0; font-size: 22px; line-height: 1.3; font-weight: 700; font-variant-numeric: tabular-nums; }
+.stock-mobile-balance dd small { font-size: 12px; font-weight: 400; }
+.stock-mobile-alert { display: block; font-size: 12px; margin-bottom: 12px; color: var(--chronos-accent); }
+.stock-mobile-actions { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 6px; }
+.stock-mobile-card button { display: flex; align-items: center; justify-content: center; gap: 6px; min-height: 44px; border: 1px solid var(--chronos-border); border-radius: 10px; padding: 8px; background: var(--chronos-panel-2); color: var(--chronos-text); font-size: 12px; }
+.stock-mobile-card button:disabled { opacity: .5; }
+.stock-mobile-card button svg { flex-shrink: 0; }
+.stock-mobile-card summary { cursor: pointer; padding: 14px 0 4px; min-height: 44px; box-sizing: border-box; font-size: 13px; }
+.stock-mobile-facts { display: grid; gap: 12px; }
+.stock-mobile-facts dd { margin: 4px 0 0; font-size: 14px; line-height: 1.5; }
+.stock-mobile-detail-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.stock-mobile-note { line-height: 1.5; }
+.stock-mobile-form :is(.stock-withdraw-modal,.stock-mini-modal) { width: 100%; max-width: none; max-height: none; padding: 0; border: 0; overflow: visible; box-sizing: border-box; }
+.stock-mobile-form form > header { display: none; }
+.stock-mobile-form :is(.stock-create-grid,.stock-edit-grid,.stock-operation-profile,.stock-custom-fields,.stock-variant-row,.stock-family-edit-row) { display: grid; grid-template-columns: minmax(0,1fr); min-width: 0; gap: 14px; }
+.stock-mobile-form :is(.stock-create-wide,.stock-edit-wide,.wide) { grid-column: auto; }
+.stock-mobile-form :is(label,fieldset,input,select,textarea) { min-width: 0; max-width: 100%; box-sizing: border-box; }
+.stock-mobile-form :is(input:not([type=checkbox]),select,button) { min-height: 44px; }
+.stock-mobile-form :is(p,small,strong,span,legend) { overflow-wrap: anywhere; }
+.stock-mobile-form form > footer { display: flex; flex-wrap: wrap; gap: 8px; position: sticky; bottom: -16px; background: var(--chronos-panel); padding: 12px 0; z-index: 1; }
+.stock-mobile-form form > footer button { flex: 1; min-width: 100px; }
+.stock-mobile-form .stock-select-plus { grid-template-columns: minmax(0,1fr) 44px; }
+.stock-mobile-form .stock-product-color-input { display: flex; gap: 8px; }
+.stock-mobile-form .stock-product-color-input input { flex: 1; }
+.stock-mobile-form .stock-product-color-list { flex-wrap: wrap; }
+.experience-mobile .stock-mobile :is(.stock-taxonomy-lists,.stock-taxonomy-inline-form,.stock-taxonomy-inline-form.family,.stock-taxonomy-inline-form.supplier,.stock-resources,.stock-resource-create form,.stock-import-export,.stock-attribute-editor form) { display: grid; grid-template-columns: minmax(0,1fr); gap: 14px; min-width: 0; }
+.stock-mobile :is(.stock-taxonomy-panel,.stock-resource-create,.stock-resource-list-card,.stock-import-card,.stock-import-preview,.stock-attribute-editor) { padding: 14px; min-width: 0; border-radius: 14px; }
+.stock-mobile :is(.stock-taxonomy-inline-form,.stock-resource-create form) .wide { grid-column: auto; }
+.stock-mobile :is(.stock-taxonomy-row,.stock-resource-card,.stock-resource-controls,.stock-import-actions,.stock-import-preview header,.stock-import-preview footer,.stock-attribute-list article) { display: flex; flex-wrap: wrap; gap: 10px; min-width: 0; }
+.stock-mobile :is(.stock-taxonomy-row > div,.stock-resource-main) { min-width: 0; flex: 1; }
+.stock-mobile .stock-resource-controls { width: 100%; }
+.stock-mobile .stock-resource-controls > select { flex: 1; }
+.stock-mobile :is(input,textarea,select,label,fieldset) { min-width: 0; max-width: 100%; box-sizing: border-box; }
+.stock-mobile :is(strong,small,p,span) { overflow-wrap: anywhere; }
+.stock-mobile .stock-import-summary { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap: 10px; }
+.stock-mobile .stock-import-preview { overflow-x: auto; }
+.stock-mobile .stock-import-actions button { width: 100%; white-space: normal; }
+.stock-mobile .stock-import-file { position: relative; }
+.mobile-native-body .stock-mobile :is(.stock-header,.stock-toolbar,.stock-tables,.stock-import-export) { padding: 0; }
+.stock-mobile-balance dd { font-size: 18px; }
+.stock-mobile-balance dd small { display: block; margin-top: 4px; }
+.stock-mobile-actions button { flex-direction: column; white-space: nowrap; }
+.stock-mobile .stock-import-card > header { flex-direction: column; align-items: flex-start; }
+.stock-mobile .stock-import-card > header > div { min-width: 0; }
+.stock-mobile .stock-import-card > header svg { flex-shrink: 0; }

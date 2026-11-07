@@ -1,0 +1,7 @@
+.local-workspace { min-height: 100vh; background: var(--chronos-bg); color: var(--chronos-text); }
+.local-workspace > header, .local-workspace > nav { display:flex; align-items:center; flex-wrap:wrap; gap:1rem; padding:.8rem clamp(1rem,4vw,3rem); background:var(--chronos-panel); }
+.local-workspace > header strong { font-size:1.25rem; }
+.local-workspace > header button { margin-left:auto; }
+.local-workspace > nav a { color:var(--chronos-muted); padding:.45rem .65rem; }
+.local-workspace > nav a[aria-current] { color:var(--chronos-accent); border-bottom:2px solid currentColor; }
+.local-workspace > main { padding:clamp(.75rem,2vw,2rem); }

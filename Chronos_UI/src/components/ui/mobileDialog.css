@@ -1,0 +1,12 @@
+.chronos-mobile-dialog { width: min(560px, calc(100vw - 24px)); max-width: calc(100vw - 24px); max-height: calc(100dvh - 24px); padding: 0; margin: auto; border: 1px solid var(--chronos-border); border-radius: 18px; background: var(--chronos-panel); color: var(--chronos-text); overflow: hidden; }
+.chronos-mobile-dialog[open] { display: flex; flex-direction: column; }
+.chronos-mobile-dialog::backdrop { background: #0009; }
+.chronos-mobile-dialog > header { display: flex; justify-content: space-between; align-items: center; flex-shrink: 0; padding: 12px 16px; gap: 12px; border-bottom: 1px solid var(--chronos-border); }
+.chronos-mobile-dialog > header h2 { margin: 0; font-size: 18px; }
+.chronos-mobile-dialog > header button { width: 44px; height: 44px; display: grid; place-items: center; padding: 0; border: 1px solid var(--chronos-border); border-radius: 12px; background: var(--chronos-panel); color: var(--chronos-text); flex-shrink: 0; }
+.chronos-mobile-dialog-body { overflow: auto; min-height: 0; padding: 16px; overscroll-behavior: contain; }
+.chronos-mobile-dialog .experience-card { padding: 0; border: 0; }
+.chronos-mobile-dialog .chronos-mobile-dialog-body .experience-card { padding: 0; border: 0; }
+.chronos-mobile-dialog .experience-card > h2, .chronos-mobile-dialog .agenda-panel > header { display: none; }
+.chronos-mobile-dialog :is(input:not([type=checkbox]),select,textarea) { min-width: 0; width: 100%; box-sizing: border-box; font-size: 16px; }
+.chronos-mobile-dialog label { min-width: 0; }

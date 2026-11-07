@@ -1,0 +1,48 @@
+.mobile-native-body .agenda-mobile { padding: 14px; gap: 14px; }
+.agenda-mobile .agenda-header { padding: 0; }
+.agenda-mobile .agenda-header h1 { font-size: 22px; margin: 0; }
+.agenda-mobile .agenda-header > div:first-child > :is(span,p), .agenda-mobile .agenda-header-card { display: none; }
+.agenda-mobile :is(.agenda-services-layout,.agenda-calendar-layout) { display: flex; flex-direction: column; min-width: 0; gap: 14px; overflow: visible; }
+.agenda-mobile-new { display: flex; align-items: center; justify-content: center; gap: 8px; background: var(--chronos-accent); color: var(--chronos-accent-contrast); border: 0; border-radius: 12px; padding: 12px; }
+.agenda-mobile .agenda-service-list { padding: 0; border: 0; overflow: visible; }
+.agenda-mobile .agenda-service-card { grid-template-columns: 48px minmax(0,1fr); gap: 12px; border-radius: 14px; padding: 14px; align-items: start; }
+.agenda-mobile .agenda-service-image { width: 48px; height: 48px; }
+.agenda-mobile .agenda-service-card :is(strong,small,span) { display: block; white-space: normal; overflow-wrap: anywhere; line-height: 1.5; }
+.agenda-mobile .agenda-card-actions { grid-column: 1 / -1; justify-content: flex-end; }
+.agenda-mobile .agenda-card-actions button { width: 44px; height: 44px; }
+.agenda-mobile .agenda-hours-panel { padding: 14px; }
+.agenda-mobile .agenda-hours-panel header { flex-wrap: wrap; }
+.agenda-mobile .agenda-hours-panel header button { width: 100%; }
+.agenda-mobile .agenda-hours-grid { grid-template-columns: minmax(0,1fr); gap: 12px; }
+.agenda-mobile .agenda-hours-row { grid-template-columns: minmax(0,1fr) minmax(0,1fr); padding: 12px; }
+.agenda-mobile .agenda-hours-row label { grid-column: 1 / -1; min-height: 36px; }
+.agenda-mobile .agenda-hours-row input[type=checkbox] { width: 20px; height: 20px; }
+.agenda-mobile .agenda-today-card { padding: 14px; }
+.agenda-mobile .agenda-today-header { flex-wrap: wrap; }
+.agenda-mobile .agenda-today-actions { display: flex; flex-wrap: wrap; }
+.agenda-mobile .agenda-week-selector { grid-template-columns: 32px minmax(0,1fr) 32px; gap: 4px; }
+.agenda-mobile .agenda-week-selector > div { display: flex; overflow-x: auto; gap: 6px; }
+.agenda-mobile .agenda-week-selector > div button { flex: 0 0 48px; }
+.agenda-mobile .agenda-quick-create { flex-wrap: wrap; gap: 12px; }
+.agenda-mobile .agenda-today-item { grid-template-columns: 24px minmax(0,1fr); padding: 12px; gap: 10px; }
+.agenda-mobile .agenda-today-item > time { grid-column: 2; grid-row: 2; }
+.agenda-mobile .agenda-today-item-actions { grid-column: 1 / -1; justify-content: flex-end; }
+.agenda-mobile .agenda-today-item-actions button { width: 44px; height: 44px; }
+.agenda-mobile .agenda-today-item :is(strong,span,small,p) { display: block; white-space: normal; overflow-wrap: anywhere; }
+.agenda-mobile .agenda-upcoming article { grid-template-columns: 64px minmax(0,1fr); }
+.agenda-mobile .agenda-upcoming article div :is(strong,span,small) { white-space: normal; overflow-wrap: anywhere; }
+.chronos-mobile-dialog .agenda-panel, .chronos-mobile-dialog .agenda-date-modal { width: 100%; min-width: 0; max-height: none; padding: 0; border: 0; overflow: visible; box-sizing: border-box; }
+.chronos-mobile-dialog :is(.agenda-form-grid,.agenda-quick-resource,.agenda-resource-options) { grid-template-columns: minmax(0,1fr); }
+.chronos-mobile-dialog .wide { grid-column: auto; }
+.chronos-mobile-dialog :is(.agenda-resource-picker,.agenda-resource-picker header,.agenda-resource-options label) { min-width: 0; }
+.chronos-mobile-dialog :is(.agenda-resource-picker span,.agenda-resource-picker strong) { overflow-wrap: anywhere; }
+.chronos-mobile-dialog .agenda-date-modal-days { grid-template-columns: repeat(7,minmax(0,1fr)); gap: 2px; }
+.chronos-mobile-dialog .agenda-date-modal-days button { min-width: 0; min-height: 40px; padding: 0; }
+.chronos-mobile-dialog .agenda-date-modal header { flex-wrap: wrap; }
+.mobile-agenda-daily .experience-heading { flex-direction: row; align-items: center; }
+.mobile-agenda-daily .experience-heading h1 { font-size: 24px; }
+.mobile-agenda-daily .experience-heading p { display: none; }
+.mobile-agenda-daily .experience-card { padding: 16px; }
+.mobile-agenda-daily .experience-card h2 { font-size: 18px; line-height: 1.5; }
+.mobile-agenda-daily .experience-card .experience-actions { display: grid; grid-template-columns: repeat(2,minmax(0,1fr)); }
+@media(max-width:380px) { .chronos-mobile-dialog :is(.experience-form-pair,.agenda-inline-fields) { grid-template-columns: minmax(0,1fr); } }

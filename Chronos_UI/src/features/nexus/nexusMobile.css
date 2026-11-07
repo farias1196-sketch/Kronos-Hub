@@ -1,0 +1,50 @@
+.mobile-native-body .nexus-shell.nexus-mobile { display: block; height: auto; min-height: 100%; overflow: visible; }
+.mobile-native-body .nexus-mobile .nexus-sidebar { max-height: none; padding: 20px 16px; gap: 16px; border: 0; background: var(--chronos-bg); }
+.mobile-native-body .nexus-mobile .nexus-header { gap: 16px; align-items: center; }
+.mobile-native-body .nexus-mobile .nexus-header h1 { font-size: 26px; }
+.mobile-native-body .nexus-mobile .nexus-header button { width: auto; padding: 10px 14px; flex-shrink: 0; background: var(--chronos-accent); color: var(--chronos-accent-contrast); }
+.mobile-native-body .nexus-mobile .nexus-search { margin: 0; padding: 0 14px; min-height: 48px; border-radius: 12px; }
+.mobile-native-body .nexus-mobile .nexus-search input { width: 100%; min-width: 0; }
+.mobile-native-body .nexus-mobile .nexus-tag-filter { width: 100%; border-radius: 12px; }
+.nexus-list-caption { margin: 0; color: var(--chronos-muted); font-size: 12px; line-height: 1.6; }
+.mobile-native-body .nexus-mobile .nexus-client-list { display: flex; flex-direction: column; gap: 12px; overflow: visible; padding: 0; }
+.mobile-native-body .nexus-mobile .nexus-client-row { flex-shrink: 0; width: 100%; min-width: 0; min-height: 108px; height: auto; grid-template-columns: 42px minmax(0, 1fr); grid-template-rows: auto auto auto; gap: 6px 12px; padding: 16px 14px; border: 1px solid var(--chronos-border); border-radius: 16px; background: var(--chronos-panel); }
+.mobile-native-body .nexus-mobile .nexus-client-row > span { grid-column: 1; grid-row: 1 / 4; align-self: start; }
+.mobile-native-body .nexus-mobile .nexus-client-row strong,
+.mobile-native-body .nexus-mobile .nexus-client-row small,
+.mobile-native-body .nexus-mobile .nexus-client-row em { grid-column: 2; line-height: 1.5; white-space: normal; overflow-wrap: anywhere; min-width: 0; }
+.mobile-native-body .nexus-mobile .nexus-client-row strong { grid-row: 1; font-size: 15px; }
+.mobile-native-body .nexus-mobile .nexus-client-row small { grid-row: 2; font-size: 14px; font-variant-numeric: tabular-nums; }
+.mobile-native-body .nexus-mobile .nexus-client-row em { grid-row: 3; font-size: 10px; padding: 3px 8px; }
+.mobile-native-body .nexus-mobile .nexus-detail { display: flex; flex-direction: column; padding: 0 16px 24px; gap: 20px; overflow: visible; }
+.nexus-mobile-toolbar { position: sticky; top: 0; z-index: 2; display: flex; justify-content: space-between; gap: 16px; margin: 0 -16px; padding: 12px 16px; background: var(--chronos-panel); border-bottom: 1px solid var(--chronos-border); }
+.nexus-mobile-toolbar button { display: inline-flex; gap: 8px; align-items: center; justify-content: center; padding: 10px 16px; border: 1px solid var(--chronos-border); border-radius: 12px; background: var(--chronos-panel); color: var(--chronos-text); font-weight: 600; }
+.nexus-mobile-toolbar button[type="submit"] { background: var(--chronos-accent); color: var(--chronos-accent-contrast); border-color: var(--chronos-accent); min-width: 96px; }
+.mobile-native-body .nexus-mobile .nexus-detail-header { display: flex; flex-direction: column; align-items: stretch; gap: 12px; }
+.mobile-native-body .nexus-mobile .nexus-detail-title { font-size: 24px; line-height: 1.3; overflow-wrap: anywhere; }
+.nexus-mobile-actions summary { width: fit-content; min-height: 44px; padding: 12px 0; cursor: pointer; color: var(--chronos-muted); font-size: 14px; }
+.mobile-native-body .nexus-mobile .nexus-header-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.mobile-native-body .nexus-mobile .nexus-registration-link { grid-template-columns: 20px minmax(0, 1fr); gap: 12px; padding: 14px; border-radius: 12px; }
+.mobile-native-body .nexus-mobile .nexus-registration-link button { grid-column: 1 / -1; }
+.mobile-native-body .nexus-mobile .nexus-panel { border-radius: 16px; padding: 16px; }
+.mobile-native-body .nexus-mobile .collapsible-section-trigger { gap: 12px; align-items: flex-start; }
+.mobile-native-body .nexus-mobile .collapsible-section-trigger > span { min-width: 0; overflow-wrap: anywhere; }
+.mobile-native-body .nexus-mobile .collapsible-section-trigger strong { font-size: 16px; line-height: 1.5; }
+.mobile-native-body .nexus-mobile .collapsible-section-trigger span > span { display: none; }
+.mobile-native-body .nexus-mobile .collapsible-section-trigger small { font-size: 12px; line-height: 1.5; }
+.mobile-native-body .nexus-mobile .nexus-form-grid { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+.mobile-native-body .nexus-mobile .nexus-field.wide { grid-column: auto; }
+.mobile-native-body .nexus-mobile .nexus-field { gap: 8px; }
+.mobile-native-body .nexus-mobile .nexus-field > span { font-size: 12px; font-weight: 600; line-height: 1.5; }
+.mobile-native-body .nexus-mobile .nexus-field :is(input, select) { min-height: 48px; border-radius: 10px; }
+.mobile-native-body .nexus-mobile .nexus-board { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+.mobile-native-body .nexus-mobile .nexus-status-card { gap: 8px; padding: 14px; }
+.mobile-native-body .nexus-mobile .nexus-status-card :is(span, strong, small) { grid-column: 2; line-height: 1.5; overflow-wrap: anywhere; font-variant-numeric: tabular-nums; }
+.mobile-native-body .nexus-mobile .nexus-feedback { margin: 0; padding: 12px 14px; border: 1px solid var(--chronos-border); border-radius: 12px; line-height: 1.5; }
+.mobile-native-body .nexus-mobile .nexus-merge-dialog { width: min(460px, calc(100vw - 32px)); max-height: calc(100dvh - 32px); overflow-y: auto; overflow-wrap: anywhere; }
+@media (min-width: 700px) {
+  .mobile-native-body .nexus-mobile .nexus-sidebar,
+  .mobile-native-body .nexus-mobile .nexus-detail { max-width: 800px; margin: 0 auto; }
+  .mobile-native-body .nexus-mobile .nexus-form-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .mobile-native-body .nexus-mobile .nexus-field.wide { grid-column: 1 / -1; }
+}

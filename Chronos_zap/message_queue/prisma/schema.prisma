@@ -1,0 +1,122 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("CHRONOS_PREVIEW_SCHEMA_URL")
+}
+
+enum QueueMessageOrigin {
+  SECURITY
+  MANUAL
+  PAYMENT
+  AGENDA
+  HERA
+  SYSTEM
+  CAMPAIGN
+}
+
+enum QueueMessageStatus {
+  QUEUED
+  SCHEDULED
+  SENDING
+  SENT
+  FAILED
+  PAUSED
+  CANCELED
+}
+
+enum QueueMessageType {
+  TEXT
+  IMAGE
+  AUDIO
+  VIDEO
+  DOCUMENT
+  STICKER
+  OTHER
+}
+
+model QueueMessage {
+  id              String             @id @default(cuid())
+  empresaId       String             @map("empresa_id")
+  connectionId    String             @map("connection_id")
+  chatId          String?            @map("chat_id")
+  contactId       String?            @map("contact_id")
+  campaignId      String?            @map("campaign_id")
+  origin          QueueMessageOrigin
+  type            QueueMessageType   @default(TEXT)
+  status          QueueMessageStatus @default(QUEUED)
+  destination     String
+  payload         Json
+  priorityScore   Int                @default(50) @map("priority_score")
+  riskScore       Int                @default(0) @map("risk_score")
+  ageBonus        Int                @default(0) @map("age_bonus")
+  attempts        Int                @default(0)
+  maxAttempts     Int                @default(3) @map("max_attempts")
+  scheduledAt     DateTime           @default(now()) @map("scheduled_at")
+  lockedUntil     DateTime?          @map("locked_until")
+  sentAt          DateTime?          @map("sent_at")
+  failedAt        DateTime?          @map("failed_at")
+  canceledAt      DateTime?          @map("canceled_at")
+  lastErrorCode   String?            @map("last_error_code")
+  lastErrorMessage String?           @map("last_error_message")
+  createdAt       DateTime           @default(now()) @map("created_at")
+  updatedAt       DateTime           @updatedAt @map("updated_at")
+
+  attemptsLog     QueueAttempt[]
+
+  @@index([empresaId, connectionId, status, scheduledAt])
+  @@index([empresaId, origin, status])
+  @@index([campaignId, status])
+  @@map("queue_messages")
+}
+
+model QueueAttempt {
+  id            String       @id @default(cuid())
+  queueMessageId String      @map("queue_message_id")
+  attemptNumber Int          @map("attempt_number")
+  status        QueueMessageStatus
+  errorCode     String?      @map("error_code")
+  errorMessage  String?      @map("error_message")
+  startedAt     DateTime     @default(now()) @map("started_at")
+  finishedAt    DateTime?    @map("finished_at")
+
+  queueMessage  QueueMessage @relation(fields: [queueMessageId], references: [id], onDelete: Cascade)
+
+  @@index([queueMessageId, attemptNumber])
+  @@map("queue_attempts")
+}
+
+model QueueConnectionHealth {
+  id                   String   @id @default(cuid())
+  empresaId            String   @map("empresa_id")
+  connectionId         String   @unique @map("connection_id")
+  healthScore          Int      @default(100) @map("health_score")
+  messagesPerMinute    Int      @default(0) @map("messages_per_minute")
+  recentFailures       Int      @default(0) @map("recent_failures")
+  campaignPaused       Boolean  @default(false) @map("campaign_paused")
+  manualAllowed        Boolean  @default(true) @map("manual_allowed")
+  nextCampaignSendAt   DateTime? @map("next_campaign_send_at")
+  nextAnySendAt        DateTime? @map("next_any_send_at")
+  lastRiskReason       String?  @map("last_risk_reason")
+  updatedAt            DateTime @updatedAt @map("updated_at")
+  createdAt            DateTime @default(now()) @map("created_at")
+
+  @@index([empresaId, healthScore])
+  @@map("queue_connection_health")
+}
+
+model QueueGlobalHealth {
+  id                 String   @id @default("global")
+  healthScore        Int      @default(100) @map("health_score")
+  workerOnline       Boolean  @default(true) @map("worker_online")
+  databaseOnline     Boolean  @default(true) @map("database_online")
+  queueOnline        Boolean  @default(true) @map("queue_online")
+  campaignsPaused    Boolean  @default(false) @map("campaigns_paused")
+  lastRiskReason     String?  @map("last_risk_reason")
+  updatedAt          DateTime @updatedAt @map("updated_at")
+  createdAt          DateTime @default(now()) @map("created_at")
+
+  @@map("queue_global_health")
+}

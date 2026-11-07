@@ -202,7 +202,7 @@ def exercise():
 
 if __name__ == "__main__":
     if sys.argv[1:] == ["--isolado"]:
-        if ROOT != Path.cwd() or ROOT.parent != Path(tempfile.gettempdir()).resolve() or not ROOT.name.startswith("loja-stock-"):
+        if ROOT != Path.cwd().resolve() or ROOT.parent != Path(tempfile.gettempdir()).resolve() or not ROOT.name.startswith("loja-stock-"):
             raise SystemExit("Use a pasta temporária criada pelo teste.")
         exercise()
     else:

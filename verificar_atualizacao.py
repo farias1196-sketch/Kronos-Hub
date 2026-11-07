@@ -76,7 +76,7 @@ if __name__ == "__main__":
     if len(sys.argv) == 1:
         main()
     else:
-        cwd = Path.cwd()
+        cwd = Path.cwd().resolve()
         if (sys.argv[1:] != [cwd.name] or cwd.name not in {"antes", "depois"} or
             cwd.parent.parent != Path(tempfile.gettempdir()).resolve() or not cwd.parent.name.startswith("chronos-upgrade-")):
             raise SystemExit("Use o diretório temporário do verificador.")

@@ -207,7 +207,7 @@ if __name__ == "__main__":
     is_server = (len(sys.argv) == 3 and sys.argv[1] == "--serve" and len(sys.argv[2]) == 32
                  and all(c in "0123456789abcdef" for c in sys.argv[2]))
     if sys.argv[1:] in (["--empty"], ["--demo"], ["--parallel"]) or is_server:
-        if ROOT != Path.cwd() or ROOT.parent != Path(tempfile.gettempdir()).resolve() or not ROOT.name.startswith("chronos-stock-test-"):
+        if ROOT != Path.cwd().resolve() or ROOT.parent != Path(tempfile.gettempdir()).resolve() or not ROOT.name.startswith("chronos-stock-test-"):
             raise SystemExit("Esta operação só é permitida na pasta temporária do teste.")
         sys.path.insert(0, str(ROOT))
         if is_server: serve(sys.argv[2])

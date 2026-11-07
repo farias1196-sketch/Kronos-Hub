@@ -56,6 +56,6 @@ Os próximos trabalhos propostos estão no [plano de evolução](ROADMAP.md).
 
 ### Autoria e licenças
 
-© 2026 Chronos Hub Dev. O código próprio publicado nesta edição do Chronos Hub, incluindo scripts, schemas e exemplos de código, é distribuído sob a [licença MIT](LICENSE). Os textos de autoria de Chronos Hub Dev nos READMEs, guias e demais documentos Markdown são distribuídos sob [Creative Commons Atribuição 4.0 Internacional](https://creativecommons.org/licenses/by/4.0/deed.pt-br). O texto integral acompanha a distribuição em [LICENSE-DOCS](LICENSE-DOCS).
+© 2026 Kronos Hub Dev. O código próprio publicado nesta edição do Chronos Hub, incluindo scripts, schemas e exemplos de código, é distribuído sob a [licença MIT](LICENSE). Os textos de autoria de Kronos Hub Dev nos READMEs, guias e demais documentos Markdown são distribuídos sob [Creative Commons Atribuição 4.0 Internacional](https://creativecommons.org/licenses/by/4.0/deed.pt-br). O texto integral acompanha a distribuição em [LICENSE-DOCS](LICENSE-DOCS).
 
-Ao compartilhar ou adaptar um guia, credite **Chronos Hub Dev**, identifique o guia, inclua o link da licença, indique as alterações e mantenha o link de origem quando fornecido. As marcas e logotipos ficam fora dessa licença de documentação. Materiais e dependências de terceiros conservam seus próprios avisos e licenças.
+Ao compartilhar ou adaptar um guia, credite **Kronos Hub Dev**, identifique o guia, inclua o link da licença, indique as alterações e mantenha o link de origem quando fornecido. As marcas e logotipos ficam fora dessa licença de documentação. Materiais e dependências de terceiros conservam seus próprios avisos e licenças.

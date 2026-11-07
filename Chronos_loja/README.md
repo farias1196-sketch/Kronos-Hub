@@ -36,4 +36,4 @@ O piloto combinado cobre importação e catálogo. Login normal e fluxos que dep
 
 ### Autoria e licenças
 
-© 2026 Chronos Hub Dev. O código próprio deste piloto usa a [licença MIT](../LICENSE). O texto deste guia usa [CC BY 4.0](../LICENSE-DOCS). Ao redistribuir o guia, credite Chronos Hub Dev e indique as adaptações. [Creative Commons Atribuição 4.0 Internacional](https://creativecommons.org/licenses/by/4.0/deed.pt-br).
+© 2026 Kronos Hub Dev. O código próprio deste piloto usa a [licença MIT](../LICENSE). O texto deste guia usa [CC BY 4.0](../LICENSE-DOCS). Ao redistribuir o guia, credite Kronos Hub Dev e indique as adaptações. [Creative Commons Atribuição 4.0 Internacional](https://creativecommons.org/licenses/by/4.0/deed.pt-br).

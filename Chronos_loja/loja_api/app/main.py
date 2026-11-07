@@ -890,7 +890,13 @@ def update_product(product_id: str, payload: ShopProductUpdatePayload) -> dict[s
         raise HTTPException(409, "Use a opção de editar ou renovar a promoção.")
     data = load_data()
     products = data.setdefault("products", {}).setdefault(payload.tenant_id, {})
+    families = group_stock_families(payload.tenant_id)
+    resolve_family_ids(families, products)
+    selected = next((p for p in families if p["id"] == product_id), None)
+    if selected is None:
+        raise HTTPException(404, "Produto não encontrado no Estoque.")
     current = products.get(product_id, {"id": product_id, "tenant_id": payload.tenant_id, "created_at": now_iso()})
+    current["stock_family"] = [selected["category"], selected["family"]]
     updates = payload.model_dump(exclude_unset=True)
     updates.pop("tenant_id", None)
     current.update(updates)
@@ -898,8 +904,8 @@ def update_product(product_id: str, payload: ShopProductUpdatePayload) -> dict[s
         current["pricing_edited_at"] = now_iso()
     current["updated_at"] = now_iso()
     products[product_id] = current
+    product = next(item for item in configured_products(payload.tenant_id, families, products) if item["id"] == product_id)
     save_data(data)
-    product = next((item for item in list_shop_products(payload.tenant_id) if item["id"] == product_id), current)
     return {"ok": True, "product": product}
 
 

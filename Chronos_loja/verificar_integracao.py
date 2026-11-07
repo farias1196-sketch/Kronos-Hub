@@ -152,6 +152,17 @@ def exercise():
                 assert sibling["variants"][0]["sale_price"] == 0
                 assert siblings["Caderno de marés"]["variants"][0]["sale_price"] == 19.25
                 assert api(shop, "/shop/products/import-from-stock", a, "POST")["imported"] == 0
+                prior = save.read_bytes()
+                ambiguous = json.loads(prior)
+                old = ambiguous["products"]["demo"][pid]
+                del old["stock_family"]
+                old["variant_prices"][sibling["variants"][0]["stock_item_id"]] = {"sale_price": 8}
+                save.write_text(json.dumps(ambiguous), encoding="utf-8")
+                unchanged = save.read_bytes()
+                api(shop, "/shop/products/import-from-stock", a, "POST", status=409)
+                api(shop, "/shop/products/"+pid, a, "PATCH", {"published":False}, status=409)
+                assert save.read_bytes() == unchanged
+                save.write_bytes(prior)
                 other = api(shop, "/shop/products/import-from-stock", b, "POST")
                 assert other["products"][0]["family"] == "Flor de papel"
         # Dois novos processos leem os mesmos arquivos locais.

@@ -1,12 +1,17 @@
 from __future__ import annotations
 
+import asyncio
 import json
 import os
 import tempfile
 import time
-from contextlib import contextmanager
+from contextlib import ExitStack, asynccontextmanager, contextmanager
 from pathlib import Path
 from typing import Any, Iterator
+
+
+class FileLockTimeout(TimeoutError):
+    """Outro processo manteve o lock além do prazo."""
 
 
 @contextmanager
@@ -35,7 +40,7 @@ def _exclusive_lock(path: Path, timeout_seconds: float = 10.0) -> Iterator[None]
                 break
             except (BlockingIOError, OSError):
                 if time.monotonic() >= deadline:
-                    raise TimeoutError(f"Arquivo ocupado por mais de {timeout_seconds:.0f}s: {path.name}")
+                    raise FileLockTimeout(f"Arquivo ocupado por mais de {timeout_seconds:.0f}s: {path.name}")
                 time.sleep(0.05)
 
         try:
@@ -50,6 +55,22 @@ def _exclusive_lock(path: Path, timeout_seconds: float = 10.0) -> Iterator[None]
                 import fcntl
 
                 fcntl.flock(handle.fileno(), fcntl.LOCK_UN)
+
+
+@asynccontextmanager
+async def async_file_lock(path: Path, timeout_seconds: float = 10.0):
+    """Espera pelo lock entre processos sem bloquear o event loop da API."""
+    deadline = time.monotonic() + timeout_seconds
+    with ExitStack() as stack:
+        while True:
+            try:
+                stack.enter_context(_exclusive_lock(path, timeout_seconds=0))
+                break
+            except FileLockTimeout:
+                if time.monotonic() >= deadline:
+                    raise
+                await asyncio.sleep(0.02)
+        yield
 
 
 def atomic_write_json(path: Path, data: Any, *, indent: int = 2) -> None:

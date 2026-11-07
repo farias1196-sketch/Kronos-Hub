@@ -2,6 +2,9 @@
 from contextlib import contextmanager
 from hashlib import sha256
 import json
+from uuid import uuid4
+from concurrent.futures import ThreadPoolExecutor
+from threading import Barrier
 from pathlib import Path
 import shutil
 import socket
@@ -18,11 +21,10 @@ ROOT = Path(__file__).resolve().parents[1]
 @contextmanager
 def server():
     # A API escolhe uma porta de loopback livre, sem disputar portas dos serviços do usuário.
-    address = Path("test-port")
-    address.unlink(missing_ok=True)
-    shutdown = Path("test-stop")
-    shutdown.unlink(missing_ok=True)
-    proc = subprocess.Popen([sys.executable, "-IB", __file__, "--serve"])
+    instance = uuid4().hex
+    proc = subprocess.Popen([sys.executable, "-IB", __file__, "--serve", instance])
+    address = Path(f"test-port-{instance}")
+    shutdown = Path(f"test-stop-{instance}")
     try:
         for _ in range(120):
             if proc.poll() is not None:
@@ -146,18 +148,55 @@ def exercise_demo():
         assert all(i["tenant_id"] == left for i in one)
 
 
-def serve():
+def exercise_concurrent_movements():
+    from init_preview import initialize_env
+    initialize_env()
+    auth = test_token("demo")
+    with server() as first:
+        item = request(first, "/stock/items", auth, method="POST",
+                       data={"kind":"sale","name":"Peça de teste","quantity":10})["item"]
+        endpoint = "/stock/items/" + item["id"] + "/withdraw"
+        with server() as second:
+            def simultaneous(amount):
+                barrier = Barrier(2)
+                def withdraw(url):
+                    barrier.wait(timeout=5)
+                    req = Request(url + endpoint, method="POST",
+                                  headers={"Authorization":"Bearer " + auth,"Content-Type":"application/json"},
+                                  data=json.dumps({"quantity":amount}).encode())
+                    try:
+                        response = build_opener(ProxyHandler({})).open(req, timeout=8)
+                    except HTTPError as error:
+                        response = error
+                    with response:
+                        response.read()
+                        return response.status
+                with ThreadPoolExecutor(max_workers=2) as pool:
+                    return sorted(pool.map(withdraw, [first, second]))
+            statuses = simultaneous(7)
+            assert statuses == [200, 409], f"Duas baixas de 7 com saldo 10: {statuses}"
+            assert simultaneous(1) == [200, 200]
+            for url in (first, second):
+                assert request(url, "/stock/items", auth)["items"][0]["quantity"] == 1
+    with server() as restarted:
+        assert request(restarted, "/stock/items", auth)["items"][0]["quantity"] == 1
+        moves = request(restarted, "/stock/internal/movements?item_id=" + item["id"], auth)["movements"]
+        assert sorted(row["quantity"] for row in moves) == [1, 1, 7]
+        assert len({row["id"] for row in moves}) == 3
+
+
+def serve(instance):
     import uvicorn
     with socket.socket() as sock:
         sock.bind(("127.0.0.1", 0))
         port = sock.getsockname()[1]
-        Path("test-port").write_text(str(port))
+        Path(f"test-port-{instance}").write_text(str(port))
         config = uvicorn.Config("Chronos_stock.stock_api.app.main:app", log_config=None, access_log=False)
         import asyncio
         async def run():
             server = uvicorn.Server(config)
             task = asyncio.create_task(server.serve(sockets=[sock]))
-            while not task.done() and not Path("test-stop").exists():
+            while not task.done() and not Path(f"test-stop-{instance}").exists():
                 await asyncio.sleep(0.05)
             server.should_exit = True
             await task
@@ -165,17 +204,20 @@ def serve():
 
 
 if __name__ == "__main__":
-    if sys.argv[1:] in (["--empty"], ["--demo"], ["--serve"]):
+    is_server = (len(sys.argv) == 3 and sys.argv[1] == "--serve" and len(sys.argv[2]) == 32
+                 and all(c in "0123456789abcdef" for c in sys.argv[2]))
+    if sys.argv[1:] in (["--empty"], ["--demo"], ["--parallel"]) or is_server:
         if ROOT != Path.cwd() or ROOT.parent != Path(tempfile.gettempdir()).resolve() or not ROOT.name.startswith("chronos-stock-test-"):
             raise SystemExit("Esta operação só é permitida na pasta temporária do teste.")
         sys.path.insert(0, str(ROOT))
-        if sys.argv[1] == "--serve": serve()
+        if is_server: serve(sys.argv[2])
         elif sys.argv[1] == "--empty": exercise()
+        elif sys.argv[1] == "--parallel": exercise_concurrent_movements()
         else: exercise_demo()
     else:
         sys.path.insert(0, str(ROOT / "Chronos_stock"))
         from exportar_piloto import FILES
-        for flag in ("--empty", "--demo"):
+        for flag in ("--empty", "--demo", "--parallel"):
             with tempfile.TemporaryDirectory(prefix="chronos-stock-test-") as temp:
                 sandbox = Path(temp)
                 for name in FILES:
@@ -184,4 +226,4 @@ if __name__ == "__main__":
                     shutil.copyfile(ROOT / name, target)
                 child = sandbox / Path(__file__).relative_to(ROOT)
                 subprocess.run([sys.executable,"-IB",str(child),flag],cwd=sandbox,check=True)
-        print("OK: início vazio, seis exemplos, isolamento, snapshots e persistência após reinício.")
+        print("OK: início vazio, seis exemplos, isolamento, snapshots, baixas simultâneas e reinício.")

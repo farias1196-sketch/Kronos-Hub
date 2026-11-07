@@ -7,12 +7,15 @@ import hashlib
 import io
 import json
 import math
+import logging
 from pathlib import Path
 import re
 from typing import Any, Literal
 from uuid import uuid4
 
 from fastapi import FastAPI, File, HTTPException, Query, UploadFile
+from fastapi import Request
+from fastapi.routing import APIRoute
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
 import sys
@@ -24,6 +27,7 @@ from chronos_auth.scope import scoped_tenant, current_user
 from chronos_auth.services import service_headers, forwarding_headers
 from Chronos_stock.demo_items import demo_items
 from chronos_storage import atomic_write_json
+from chronos_storage.atomic import FileLockTimeout, async_file_lock
 from chronos_storage.runtime_sync import postgres_enabled, postgres_mode, run as run_postgres
 from chronos_storage.stock_runtime import load_stock_payload
 from chronos_storage.stock_shop_exchange import SHOP_COLUMNS, read_shop_prices, parse_shop_columns, commit_stock_shop
@@ -31,7 +35,26 @@ from chronos_storage.stock_catalog_csv import COLUMNS as CATALOG_COLUMNS, read_c
 from pydantic import BaseModel, Field
 
 
+class StockRoute(APIRoute):
+    def get_route_handler(self):
+        handle = super().get_route_handler()
+        if not self.path.startswith("/stock/"):
+            return handle
+
+        async def handle_current_state(request: Request):
+            # O arquivo de transação é distinto do lock usado para a substituição atômica do JSON.
+            try:
+                async with async_file_lock(DATA_DIR / "operations"):
+                    load_stock_data()
+                    return await handle(request)
+            except FileLockTimeout as exc:
+                raise HTTPException(503, "Estoque ocupado. Tente novamente.") from exc
+
+        return handle_current_state
+
+
 app = FastAPI(title="Chronos Stock API", version="0.1.0")
+app.router.route_class = StockRoute
 
 install_sso(app, "stock")
 app.add_middleware(
@@ -589,11 +612,17 @@ def build_ai_snapshot(tenant_id: str) -> dict[str, Any]:
     }
 
 
-def write_ai_snapshot(tenant_id: str) -> dict[str, Any]:
+def write_ai_snapshot(tenant_id: str, *, persist_stock: bool = True) -> dict[str, Any]:
     snapshot_path = snapshot_file(tenant_id)
     snapshot = build_ai_snapshot(tenant_id)
-    save_stock_data()
-    atomic_write_json(snapshot_path, snapshot)
+    if persist_stock:
+        save_stock_data()
+    try:
+        atomic_write_json(snapshot_path, snapshot)
+    except OSError as exc:
+        if not persist_stock:
+            raise HTTPException(503, "Snapshot indisponível. Tente novamente.") from exc
+        logging.getLogger(__name__).warning("Saldo gravado. Snapshot pendente de regeneração.")
     return snapshot
 
 
@@ -765,9 +794,6 @@ def purge_expired_import_previews() -> None:
     expired_ids = [preview_id for preview_id, preview in IMPORT_PREVIEWS.items() if preview["expires_at"] <= now]
     for preview_id in expired_ids:
         IMPORT_PREVIEWS.pop(preview_id, None)
-
-
-load_stock_data()
 
 
 @app.get("/health")
@@ -1408,7 +1434,7 @@ async def withdraw_internal_item(item_id: str, payload: MovementRequest) -> dict
 
 @app.get("/stock/ai/snapshot")
 async def get_ai_snapshot(tenant_id: str = Query(default=DEFAULT_TENANT_ID)) -> dict[str, Any]:
-    snapshot = write_ai_snapshot(normalize_tenant_id(tenant_id))
+    snapshot = write_ai_snapshot(normalize_tenant_id(tenant_id), persist_stock=False)
     return {"ok": True, "snapshot": snapshot}
 
 

@@ -137,11 +137,28 @@ def exercise():
                 second = api(shop, "/shop/products/import-from-stock", a, "POST")
                 assert second["imported"] == 0 and len(second["products"]) == 1
                 assert second["products"][0]["variants"][0]["sale_price"] == 19.25
+                # Simula o catálogo da distribuição inicial, que ainda não guardava a família de origem.
+                legacy = json.loads(save.read_text(encoding="utf-8"))
+                del legacy["products"]["demo"][pid]["stock_family"]
+                save.write_text(json.dumps(legacy), encoding="utf-8")
+                api(stock, "/stock/items", a, "POST", {"name":"Segunda família", "sku":"FIC-02",
+                    "category":"Oficina", "family":"CADERNO DE MARÉS", "quantity":3, "kind":"sale"})
+                collided = api(shop, "/shop/products/import-from-stock", a, "POST")
+                assert collided["imported"] == 1
+                siblings = {p["family"]: p for p in collided["products"]}
+                assert siblings["Caderno de marés"]["id"] == pid
+                sibling = siblings["CADERNO DE MARÉS"]
+                assert sibling["id"] != pid and not sibling["published"]
+                assert sibling["variants"][0]["sale_price"] == 0
+                assert siblings["Caderno de marés"]["variants"][0]["sale_price"] == 19.25
+                assert api(shop, "/shop/products/import-from-stock", a, "POST")["imported"] == 0
                 other = api(shop, "/shop/products/import-from-stock", b, "POST")
                 assert other["products"][0]["family"] == "Flor de papel"
         # Dois novos processos leem os mesmos arquivos locais.
         with service(stock_module, stock_socket, count), service(shop_module, shop_socket, count) as shop:
-            private = api(shop, "/shop/products", a)["products"][0]
+            by_id = {p["id"]: p for p in api(shop, "/shop/products", a)["products"]}
+            assert by_id[sibling["id"]]["family"] == "CADERNO DE MARÉS"
+            private = by_id[pid]
             assert private["published"] and private["variants"][0]["quantity"] == 8
             public = api(shop, "/public/demo/catalog")["products"]
             assert len(public) == 1 and public[0]["id"] == pid and public[0]["public_name"] == "Catálogo fictício"

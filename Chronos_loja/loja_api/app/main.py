@@ -366,6 +366,35 @@ def group_stock_families(tenant_id: str) -> list[dict[str, Any]]:
     return list(families.values())
 
 
+def resolve_family_ids(families: list[dict], saved: dict) -> None:
+    groups: dict[str, list[dict]] = {}
+    for product in families:
+        groups.setdefault(product["id"], []).append(product)
+    for legacy_id, group in groups.items():
+        legacy = saved.get(legacy_id)
+        owner = None
+        if legacy is not None:
+            source = legacy.get("stock_family")
+            if source:
+                owner = next((p for p in group if [p["category"], p["family"]] == source), None)
+            else:
+                # Versões anteriores guardavam os IDs das variantes, mesmo com nome público editado.
+                known = set(legacy.get("variant_prices") or {})
+                matches = [p for p in group if any(str(v["stock_item_id"]) in known for v in p["variants"])]
+                if len(matches) == 1:
+                    owner = matches[0]
+                elif len(group) == 1 and not known:
+                    owner = group[0]
+                elif len(matches) > 1 or not known:
+                    raise HTTPException(409, "Catálogo antigo ambíguo. Diferencie as famílias no Estoque e reimporte.")
+        for product in group:
+            source = [product["category"], product["family"]]
+            digest = hashlib.sha256(json.dumps(source, ensure_ascii=False).encode()).hexdigest()
+            distinct_id = f"{legacy_id}~{digest}"
+            if distinct_id in saved or (product is not owner and (legacy is not None or len(group) > 1)):
+                product["id"] = distinct_id
+
+
 def merge_product_config(base: dict[str, Any], saved: dict[str, Any] | None) -> dict[str, Any]:
     if not saved:
         return base
@@ -393,7 +422,9 @@ def merge_product_config(base: dict[str, Any], saved: dict[str, Any] | None) -> 
 def list_shop_products(tenant_id: str) -> list[dict[str, Any]]:
     data = load_data()
     saved_products = data.get("products", {}).get(tenant_id, {})
-    return configured_products(tenant_id, group_stock_families(tenant_id), saved_products)
+    families = group_stock_families(tenant_id)
+    resolve_family_ids(families, saved_products)
+    return configured_products(tenant_id, families, saved_products)
 
 
 def configured_products(tenant_id: str, families: list[dict], saved_products: dict) -> list[dict]:
@@ -881,6 +912,7 @@ def import_from_stock(tenant_id: str = Query(default=DEFAULT_TENANT_ID)) -> dict
     products = group_stock_families(tenant_id)
     data = load_data()
     bucket = data.setdefault("products", {}).setdefault(tenant_id, {})
+    resolve_family_ids(products, bucket)
     imported = 0
     for product in products:
         variant_prices = {
@@ -925,6 +957,7 @@ def import_from_stock(tenant_id: str = Query(default=DEFAULT_TENANT_ID)) -> dict
                     if can_migrate_legacy_price and not float(current_price.get("promotional_price") or 0) and float(price_config.get("promotional_price") or 0):
                         current_price["promotional_price"] = price_config["promotional_price"]
             bucket[product["id"]]["pricing_initialized_at"] = bucket[product["id"]].get("pricing_initialized_at") or now_iso()
+        bucket[product["id"]]["stock_family"] = [product["category"], product["family"]]
     catalog = configured_products(tenant_id, products, bucket)
     save_data(data)
     return {"ok": True, "imported": imported, "products": catalog}

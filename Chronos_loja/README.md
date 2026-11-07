@@ -23,6 +23,8 @@ O teste usa duas empresas e tokens fictícios em uma pasta temporária. Ele prec
 3. Publicar explicitamente o produto para que apareça em `GET /public/{slug}/catalog`. Com a exibição de estoque desligada, o catálogo omite quantidade, disponibilidade e parâmetros internos, mas o administrador ainda vê o estoque na área privada.
 4. Se o Estoque estiver indisponível, a importação retorna `503`. Um retorno incompatível com a empresa ou com o formato esperado retorna `502`.
 
+Famílias diferentes que geram o mesmo identificador textual recebem IDs separados. Uma reimportação conserva preços, publicação e referências existentes. Quando um catálogo antigo vincula as mesmas configurações a mais de uma família e a origem é ambígua, a importação retorna 409 antes de gravar. Diferencie os nomes no Estoque e revise a associação antes de tentar novamente.
+
 Para executar manualmente, rode `python init_preview.py` na raiz do piloto e inicie, em terminais separados do mesmo ambiente virtual:
 
 ```powershell

@@ -1,9 +1,9 @@
 """Seis exemplos inventados para a empresa demo da distribuição local."""
-from pathlib import Path
+from preview_config import ROOT
 
 
 def enable_demo_stock():
-    directory = Path(__file__).resolve().parents[1] / ".local" / "stock"
+    directory = ROOT / ".local" / "stock"
     directory.mkdir(parents=True, exist_ok=True)
     (directory / ".demo-on-first-start").touch()
 

@@ -4,7 +4,7 @@ import copy
 import json
 from datetime import date, datetime, timezone, timedelta
 from decimal import Decimal
-from pathlib import Path
+from preview_config import ROOT
 from threading import RLock
 from uuid import uuid4
 from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
@@ -14,7 +14,7 @@ from chronos_storage.postgres import transaction
 from chronos_storage.runtime_sync import postgres_mode, run
 
 LOCK = RLock()
-DATA_PATH = Path(__file__).resolve().parents[3] / ".local/loja/promotions.json"
+DATA_PATH = ROOT / ".local/loja/promotions.json"
 
 def today():
     try:

@@ -1,5 +1,5 @@
 import json
-from pathlib import Path
+from preview_config import ROOT
 from threading import RLock
 from typing import Literal
 from fastapi import HTTPException
@@ -9,7 +9,7 @@ from .runtime_sync import postgres_mode, run
 from . import atomic_write_json
 
 DEFAULT = {"mode": "days", "days": 7, "text": ""}
-PATH = Path(__file__).resolve().parents[1] / ".local/quote_validity.json"
+PATH = ROOT / ".local/quote_validity.json"
 LOCK = RLock()
 
 class QuoteValidityPayload(BaseModel):

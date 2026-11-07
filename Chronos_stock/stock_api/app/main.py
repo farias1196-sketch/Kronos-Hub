@@ -18,10 +18,7 @@ from fastapi import Request
 from fastapi.routing import APIRoute
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import StreamingResponse
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+from preview_config import ROOT
 from chronos_auth.integration import install_sso
 from chronos_auth.scope import scoped_tenant, current_user
 from chronos_auth.services import service_headers, forwarding_headers
@@ -72,7 +69,7 @@ ServiceResourceStatus = Literal["active", "maintenance", "disabled"]
 AttributeType = Literal["text", "number", "select", "boolean"]
 AttributeRole = Literal["information", "variant", "pricing_input", "promotion_tag"]
 DEFAULT_TENANT_ID = "demo"
-DATA_DIR = Path(__file__).resolve().parents[3] / ".local" / "stock"
+DATA_DIR = ROOT / ".local" / "stock"
 AI_SNAPSHOT_DIR = DATA_DIR / "ai_snapshots"
 STOCK_DATA_PATH = DATA_DIR / "stock_data.json"
 

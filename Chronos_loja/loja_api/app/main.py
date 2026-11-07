@@ -7,7 +7,6 @@ import secrets
 from datetime import date, datetime, timedelta, timezone
 from io import BytesIO
 from os import getenv
-from pathlib import Path
 from typing import Any, Literal
 from urllib.parse import quote, urljoin
 from urllib.request import Request
@@ -17,10 +16,7 @@ from uuid import uuid4
 from fastapi import FastAPI, HTTPException, Query
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import Response
-import sys
-from pathlib import Path
-
-sys.path.insert(0, str(Path(__file__).resolve().parents[3]))
+from preview_config import ROOT
 from chronos_auth.integration import install_sso
 from chronos_auth.scope import scoped_tenant, current_user
 from chronos_auth.services import service_headers, forwarding_headers
@@ -56,7 +52,7 @@ app.add_middleware(
 )
 
 
-DATA_DIR = Path(__file__).resolve().parents[3] / ".local" / "loja"
+DATA_DIR = ROOT / ".local" / "loja"
 SHOP_DATA_PATH = DATA_DIR / "loja_data.json"
 STOCK_API_URL = "http://127.0.0.1:18815"
 CORE_API_URL = "http://127.0.0.1:18802"

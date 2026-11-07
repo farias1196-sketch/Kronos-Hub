@@ -2,7 +2,9 @@
 from pathlib import Path
 import re
 
-ROOT = Path(__file__).resolve().parent
+SOURCE = Path(__file__).resolve().parent
+# O checkout e os pilotos usam a própria raiz. Wheels usam a pasta de execução.
+ROOT = SOURCE if (SOURCE / ".env.example").is_file() else Path.cwd().resolve()
 ENV_PATH = ROOT / ".env"
 FIELDS = ("PREVIEW_SSO_SECRET", "PREVIEW_ADM_SECRET",
           "PREVIEW_DEMO_PASSWORD", "PREVIEW_INITIAL_ADMIN_PASSWORD")

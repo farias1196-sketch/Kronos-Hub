@@ -37,6 +37,8 @@ O [piloto integrado de Loja e Estoque](Chronos_loja/README.md) testa importaçã
 
 O [piloto independente do Estoque](Chronos_stock/README.md) inclui os pacotes compartilhados necessários e um teste com duas empresas. A opção `--demo` habilita seis itens novos e inteiramente fictícios no primeiro estoque local.
 
+As versões instaláveis dos pilotos e as instruções de execução estão no [guia de pacotes](PACOTES.md).
+
 ### Verificar
 
 ```powershell

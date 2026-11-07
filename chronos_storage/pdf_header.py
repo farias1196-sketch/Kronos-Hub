@@ -1,5 +1,5 @@
 import json
-from pathlib import Path
+from preview_config import ROOT
 from threading import RLock
 from typing import Annotated
 from fastapi import HTTPException
@@ -9,7 +9,7 @@ from .runtime_sync import postgres_mode, run
 from . import atomic_write_json
 
 DEFAULT = {"lines": None}
-PATH = Path(__file__).resolve().parents[1] / ".local/pdf_header.json"
+PATH = ROOT / ".local/pdf_header.json"
 LOCK = RLock()
 
 class PdfHeaderPayload(BaseModel):

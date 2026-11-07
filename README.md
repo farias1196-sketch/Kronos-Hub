@@ -39,6 +39,8 @@ O [piloto independente do Estoque](Chronos_stock/README.md) inclui os pacotes co
 
 As versões instaláveis dos pilotos e as instruções de execução estão no [guia de pacotes](PACOTES.md).
 
+O [guia de atualização](ATUALIZACAO.md) descreve como conservar a configuração, o estoque e o catálogo já existente.
+
 ### Verificar
 
 ```powershell

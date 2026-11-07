@@ -39,7 +39,16 @@ def exercise():
         adm_token = expect(a.post("/auth/login", json={"username":"admin-local",
                            "password":require_secret("PREVIEW_INITIAL_ADMIN_PASSWORD")}), 200).json()["access_token"]
         expect(a.get("/companies", headers={"Authorization":f"Bearer {adm_token}"}), 200)
-        print("ADM: login, recurso protegido e ausência de reset/setup HTTP.")
+        import jwt
+        adm_secret = require_secret("PREVIEW_ADM_SECRET")
+        for payload, secret in [
+            ({"sub":"admin-local"}, adm_secret),
+            ({"sub":"admin-local", "exp":1}, adm_secret),
+            ({"sub":"admin-local", "exp":4102444800}, require_secret("PREVIEW_SSO_SECRET")),
+        ]:
+            invalid = jwt.encode(payload, secret, algorithm="HS256")
+            expect(a.get("/companies", headers={"Authorization":f"Bearer {invalid}"}), 401)
+        print("ADM: login, recurso protegido, validade e assinatura do token.")
         initial = require_secret("PREVIEW_DEMO_PASSWORD")
         reply = expect(c.post("/core/auth/login", json={**identity,"password":initial}), 200).json()
         assert reply["mustChangePassword"] and not reply.get("token")

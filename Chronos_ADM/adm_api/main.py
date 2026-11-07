@@ -13,7 +13,7 @@ from chronos_auth import AuthUser, get_current_user
 from fastapi import Depends, FastAPI, HTTPException, Query, status
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.security import OAuth2PasswordBearer
-from jose import JWTError, jwt
+import jwt
 from passlib.context import CryptContext
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
@@ -134,11 +134,11 @@ def get_current_admin(token: Annotated[str, Depends(oauth2_scheme)], db: Session
         headers={"WWW-Authenticate": "Bearer"},
     )
     try:
-        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+        payload = jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM], options={"require": ["exp", "sub"]})
         username = payload.get("sub")
         if not username:
             raise credentials_exception
-    except JWTError as exc:
+    except jwt.InvalidTokenError as exc:
         raise credentials_exception from exc
 
     admin = db.query(SuperAdmin).filter(SuperAdmin.username == username).first()

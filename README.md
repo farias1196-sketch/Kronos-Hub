@@ -52,6 +52,8 @@ python audit_index.py
 
 Os testes usam outra pasta temporária, outra configuração e dados inventados. O auditor lê o índice Git; os arquivos em `.env`, `.local/`, `node_modules/` e `dist/` não fazem parte da distribuição. Consulte também [arquitetura](ARCHITECTURE.md), [segurança](SECURITY.md) e [contribuição](CONTRIBUTING.md).
 
+Os próximos trabalhos propostos estão no [plano de evolução](ROADMAP.md).
+
 ### Autoria e licenças
 
 © 2026 Chronos Hub Dev. O código próprio publicado nesta edição do Chronos Hub, incluindo scripts, schemas e exemplos de código, é distribuído sob a [licença MIT](LICENSE). Os textos de autoria de Chronos Hub Dev nos READMEs, guias e demais documentos Markdown são distribuídos sob [Creative Commons Atribuição 4.0 Internacional](https://creativecommons.org/licenses/by/4.0/deed.pt-br). O texto integral acompanha a distribuição em [LICENSE-DOCS](LICENSE-DOCS).
